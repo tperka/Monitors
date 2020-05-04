@@ -1,4 +1,5 @@
 #include <iostream>
+#include <signal.h>
 #include <pthread.h>
 #include <boost/random/mersenne_twister.hpp>
 
@@ -47,12 +48,12 @@ int main()
 	return 0;
 }
 
-randomSleep(int max, int min)
+void randomSleep(int max, int min)
 {
 	//usleep(1000000*min + (gen() % 1000000) * (max - min));
 }
 
-void *producer(void*)
+void *Producer(void*)
 {
 	int item;
 	for(;;)

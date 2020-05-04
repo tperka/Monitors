@@ -1,6 +1,6 @@
 #ifndef BUFFER_HPP
 #define BUFFER_HPP
-#include "Monitor.hpp"
+#include "monitor.hpp"
 
 #define BUF_SIZE 9
 
@@ -14,14 +14,11 @@ class Buffer : public Monitor
 	Condition notReadByA, notReadByB;
 public:
 	Buffer()
+	: notFull(1), notReadByA(1), notReadByB(1), notEmpty(0), read(0)
 	{
 		capacity = BUF_SIZE;
 		size = 0;
 		buffer = new int[capacity];
-		notFull(1);
-		notReadByA(1);
-		notReadByB(1);
-		notEmpty(0);
 	}
 
 	~Buffer()
@@ -112,12 +109,12 @@ public:
 
 	void show()
 	{
-		cout << "Current queue state: " << endl;
-		for(int i = 0; i < size)
+		std::cout << "Current queue state: " << std::endl;
+		for(int i = 0; i < size; i++)
 		{
-			cout << buffer[i] << "\t";
+			std::cout << buffer[i] << "\t";
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 
 	bool isFull()
