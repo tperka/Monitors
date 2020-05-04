@@ -21,6 +21,7 @@ public:
 		notFull(1);
 		notReadByA(1);
 		notReadByB(1);
+		notEmpty(0);
 	}
 
 	~Buffer()
@@ -28,7 +29,7 @@ public:
 		delete[] buffer;
 	}
 
-	void push_back(int value)
+	void insert(int value)
 	{
 		enter();
 		if(isFull())
@@ -36,6 +37,8 @@ public:
 
 		buffer[size] = value;
 		++size;
+		std::cout << "Producer inserted an item: " << value << std::endl;
+		show();
 
 		if(size == 1)
 			signal(notEmpty);
@@ -43,7 +46,7 @@ public:
 		leave();
 	}
 
-	void readA_front()
+	void readA()
 	{
 		enter();
 		if( isEmpty())
@@ -51,11 +54,12 @@ public:
 
 		wait(notReadByA);
 		signal(read);
+		std :: cout << "A read an item: " << buffer[0] << std::endl;
 		leave();
 
 	}
 
-	void readB_front()
+	void readB()
 	{
 		enter();
 		if( isEmpty())
@@ -63,11 +67,12 @@ public:
 
 		wait(notReadByB);
 		signal(read);
+		std :: cout << "B read an item: " << buffer [0] << std::endl;
 		leave();
 
 	}
 
-	int pop_front()
+	void consume()
 	{
 		enter();
 		
@@ -84,7 +89,8 @@ public:
 			buffer[i] = buffer[i+1];
 		}
 		--size;
-
+		std::cout << "Consumer took out an item: " << result << std::endl;
+		show();
 		if(size == capacity-1)
 			signal(notFull);
 		
@@ -92,9 +98,6 @@ public:
 		signal(notReadByB);
 
 		leave();
-
-		return result;
-				
 	}
 
 	bool isEmpty()

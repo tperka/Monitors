@@ -55,9 +55,21 @@ public:
 #ifdef _WIN32
 	  ReleaseSemaphore( sem, 1, NULL );
 #else
-     if( sem_post( & sem ) != 0 )
-       throw "sem_post: failed";
+	  if(getValue() == 0 )
+	  {
+	     if( sem_post( & sem ) != 0 )
+	       throw "sem_post: failed";
+	  }
 #endif
+  }
+
+  int getVal()
+  {
+	  int val;
+	  if( sem_getvalue( &sem, &val ) != 0)
+		  throw "sem_getvalue: failed";
+
+	  return val;
   }
   
 
