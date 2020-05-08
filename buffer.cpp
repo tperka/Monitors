@@ -3,7 +3,7 @@
 
 
 Buffer::Buffer()
-: notFull(1), notReadByA(1), notReadByB(1), notEmpty(0), read(0)
+: notFull(0), notReadByA(1), notReadByB(1), notEmpty(0), read(0)
 {
 	capacity = BUF_SIZE;
 	size = 0;
@@ -18,8 +18,12 @@ Buffer::~Buffer()
 void Buffer::insert(int value)
 {
 	enter();
+	std::cout << "Producer tries to insert item... " << std::endl;	
 	if(isFull())
+	{
+		std::cout << "Producer is waiting for not full" << std::endl;
 		wait(notFull);
+	}
 
 	buffer[size] = value;
 	++size;
@@ -27,7 +31,11 @@ void Buffer::insert(int value)
 	show();
 
 	if(size == 1)
+	{
+		std::cout << "Producer signals that queue is not empty" << std::endl;
 		signal(notEmpty);
+	}
+
 
 	leave();
 }
@@ -35,13 +43,18 @@ void Buffer::insert(int value)
 void Buffer::readA()
 {
 	enter();
+	std::cout << "A tries to read item... " << std::endl;	
 	if( isEmpty())
 	{
+		std::cout << "A encountered empty queue" << std::endl;
 		leave();//wait(notEmpty);
+
 		return;
 	}
 
+	std::cout << "A checks if he hasn't read the item" << std::endl;
 	wait(notReadByA);
+
 	signal(read);
 	std :: cout << "A read an item: " << buffer[0] << std::endl;
 	leave();
@@ -51,11 +64,15 @@ void Buffer::readA()
 void Buffer::readB()
 {
 	enter();
+	std::cout << "B tries to read item... " << std::endl;	
 	if( isEmpty())
 	{
+		std::cout << "B encountered empty queue" << std::endl;
+
 		leave();
 		return;
 	}
+	std::cout << "B checks if he hasn't read the item" << std::endl;
 
 	wait(notReadByB);
 	signal(read);
@@ -67,12 +84,15 @@ void Buffer::readB()
 void Buffer::consume()
 {
 	enter();
-	
+	std::cout << "Consumer tries to take item... " << std::endl;	
 	int result;
 
 	if(isEmpty())
+	{
+		std::cout << "Consumer waits for not empty" << std::endl;
 		wait(notEmpty);
-
+	}
+	std::cout << "Consumer checks if item was read" << std::endl;
 	wait(read);
 
 	result = buffer[0];
@@ -84,7 +104,10 @@ void Buffer::consume()
 	std::cout << "Consumer took out an item: " << result << std::endl;
 	show();
 	if(size == capacity-1)
+	{
+		std::cout << "Consumer signals that queue is not full" << std::endl;
 		signal(notFull);
+	}
 	
 	signal(notReadByA);
 	signal(notReadByB);
