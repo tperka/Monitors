@@ -12,6 +12,7 @@ class Buffer : public Monitor
 	Condition notFull, notEmpty;
 	Condition read;
 	Condition notReadByA, notReadByB;
+	bool readByA, readByB;
 public:
 	Buffer();
 

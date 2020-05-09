@@ -16,19 +16,19 @@ Buffer buffer;	//tworze globalny obiekt klasy bufor, wspoldzielony pomiedzy watk
 
 
 boost::random::mt19937 gen(time(0));
-
+/*
 void handleCtrlC(int)
 {
 	system("ipcrm -a");
 	cout << endl << "Everything has been cleared, exiting program..." << endl;
 	exit(EXIT_SUCCESS);
 }
-
+*/
 
 int main()
 {
 	//przechwytywanie Ctrl-C
-	signal(SIGINT, handleCtrlC);
+//	signal(SIGINT, handleCtrlC);
 	pthread_t producer_thread_id, consumer_thread_id, readerA_thread_id, readerB_thread_id;
 	//rozpoczecie pracy watkow
 	if(pthread_create(&producer_thread_id, NULL, Producer, NULL) != 0
