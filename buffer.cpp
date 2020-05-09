@@ -1,9 +1,9 @@
 #include "buffer.hpp"
 #include <iostream>
 
+using namespace std;
 
 Buffer::Buffer()
-: notFull(0), notReadByA(0), notReadByB(0), notEmpty(0), read(0)
 {
 
 	capacity = BUF_SIZE;
@@ -20,21 +20,21 @@ Buffer::~Buffer()
 void Buffer::insert(int value)
 {
 	enter();
-	std::cout << "Producer tries to insert item... " << std::endl;	
+	//cout << "Producer tries to insert item... " << endl;	
 	if(isFull())
 	{
-		std::cout << "Producer is waiting for not full" << std::endl;
+		//cout << "Producer is waiting for not full" << endl;
 		wait(notFull);
 	}
 
 	buffer[size] = value;
 	++size;
-	std::cout << "Producer inserted an item: " << value << std::endl;
+	cout << "Producer inserted an item: " << value << endl;
 	show();
 
 	if(size == 1)
 	{
-		std::cout << "Producer signals that queue is not empty" << std::endl;
+		//cout << "Producer signals that queue is not empty" << endl;
 		signal(notEmpty);
 	}
 
@@ -45,28 +45,28 @@ void Buffer::insert(int value)
 void Buffer::readA()
 {
 	enter();
-	std::cout << "A tries to read item... " << std::endl;	
+//	cout << "A tries to read item... " << endl;	
 	if( isEmpty())
 	{
-		std::cout << "A encountered empty queue" << std::endl;
-		leave();//wait(notEmpty);
-
+		//cout << "A encountered empty queue" << endl;
+		leave();
 		return;
 	}
 
 	if(readByA)
 	{	
-		std::cout << "A waits for notReadByA"  << std::endl;
+	//	cout << "A waits for notReadByA"  << endl;
 		wait(notReadByA);
 	}
 
 	readByA = true;
+	std :: cout << "A read an item: " << buffer[0] << endl;
+
 	if(!readByB)
 	{
-		std::cout << "A signaled read" << std::endl;
+	//	cout << "A signaled read" << endl;
 		signal(read);
 	}
-	std :: cout << "A read an item: " << buffer[0] << std::endl;
 	leave();
 
 }
@@ -74,30 +74,29 @@ void Buffer::readA()
 void Buffer::readB()
 {
 	enter();
-	std::cout << "B tries to read item... " << std::endl;	
+	//cout << "B tries to read item... " << endl;	
 	if( isEmpty())
 	{
-		std::cout << "B encountered empty queue" << std::endl;
-
+		//cout << "B encountered empty queue" << endl;
 		leave();
 		return;
 	}
-	std::cout << "B checks if he hasn't read the item" << std::endl;
 
 	if(readByB)
 	{
-		std::cout << "B waits for notReadByB"  << std::endl;
+		//cout << "B waits for notReadByB"  << endl;
 		wait(notReadByB);
 	}
 
 	readByB = true;
+	std :: cout << "B read an item: " << buffer [0] << endl;
+
 	if(!readByA)
 	{
-		std::cout << "A signaled read" << std::endl;
+		//cout << "B signaled read" << endl;
 		signal(read);
 	}
 
-	std :: cout << "B read an item: " << buffer [0] << std::endl;
 	leave();
 
 }
@@ -105,17 +104,17 @@ void Buffer::readB()
 void Buffer::consume()
 {
 	enter();
-	std::cout << "Consumer tries to take item... " << std::endl;	
+//	cout << "Consumer tries to take item... " << endl;	
 	int result;
 
 	if(isEmpty())
 	{
-		std::cout << "Consumer waits for not empty" << std::endl;
+		//cout << "Consumer waits for not empty" << endl;
 		wait(notEmpty);
 	}
 	if(!(readByA || readByB))
 	{
-		std::cout << "Consumer waits for read" << std::endl;
+		//cout << "Consumer waits for read" << endl;
 		wait(read);
 	}
 
@@ -125,24 +124,26 @@ void Buffer::consume()
 		buffer[i] = buffer[i+1];
 	}
 	--size;
-	std::cout << "Consumer took out an item: " << result << std::endl;
+	cout << "Consumer took out an item: " << result << endl;
 	show();
-	if(size == capacity-1)
-	{
-		std::cout << "Consumer signals that queue is not full" << std::endl;
-		signal(notFull);
-	}
+	
 	if(readByA)	
 	{
 		readByA = false;
 		signal(notReadByA);
 	}
+
 	if(readByB)
 	{
 		readByB = false;
 		signal(notReadByB);
 	}
 
+	if(size == capacity-1)
+	{
+		//cout << "Consumer signals that queue is not full" << endl;
+		signal(notFull);
+	}
 
 	leave();
 }
@@ -159,12 +160,12 @@ int Buffer::getSize()
 
 void Buffer::show()
 {
-	std::cout << "Current queue state: " << std::endl;
+	cout << "Current queue state: " << endl;
 	for(int i = 0; i < size; i++)
 	{
-		std::cout << buffer[i] << "\t";
+		cout << buffer[i] << "\t";
 	}
-	std::cout << std::endl;
+	cout << endl;
 }
 
 bool Buffer::isFull()

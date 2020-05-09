@@ -36,4 +36,4 @@ public:
 
 };
 
-#endif // !1bu BUFFER_HPP
+#endif // BUFFER_HPP

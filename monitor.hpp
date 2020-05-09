@@ -55,21 +55,9 @@ public:
 #ifdef _WIN32
 	  ReleaseSemaphore( sem, 1, NULL );
 #else
-	  if(getVal() == 0 )
-	  {
-	     if( sem_post( & sem ) != 0 )
-	       throw "sem_post: failed";
-	  }
+     if( sem_post( & sem ) != 0 )
+     	throw "sem_post: failed";
 #endif
-  }
-
-  int getVal()
-  {
-	  int val;
-	  if( sem_getvalue( &sem, &val ) != 0)
-		  throw "sem_getvalue: failed";
-
-	  return val;
   }
   
 
@@ -87,7 +75,7 @@ class Condition
   friend class Monitor;
 
 public:
-	Condition(int condValue ) : w( condValue  )
+	Condition() : w( 0 )
 	{
 		waitingCount = 0;
 	}
@@ -104,7 +92,7 @@ public:
 			-- waitingCount;
 			w.v();
 			return true;
-		}//if
+		}
 		else
 			return false;
 	}
