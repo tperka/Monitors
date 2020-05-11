@@ -6,7 +6,7 @@
 #include "buffer.hpp"
 
 #define PRODUCER_MIN 1
-#define PRODUCER_MAX 3
+#define PRODUCER_MAX 2
 
 #define CONSUMER_MIN 0
 #define CONSUMER_MAX 1

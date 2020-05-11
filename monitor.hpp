@@ -89,12 +89,16 @@ public:
 	{
 		if( waitingCount )
 		{
-			-- waitingCount;
+			--waitingCount;
 			w.v();
 			return true;
 		}
 		else
 			return false;
+	}
+	int getWaitingCount()
+	{
+		return waitingCount;
 	}
 
 private:
@@ -120,7 +124,7 @@ public:
 
 	void wait( Condition & cond )
 	{
-		++ cond.waitingCount;
+		++cond.waitingCount;
 		leave();
 		cond.wait();
 	}
