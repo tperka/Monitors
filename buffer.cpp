@@ -20,10 +20,10 @@ Buffer::~Buffer()
 void Buffer::insert(int value)
 {
 	enter();
-	//cout << "Producer tries to insert item... " << endl;	
+	cout << "Producer tries to insert item... " << endl;	
 	if(isFull())
 	{
-		//cout << "Producer is waiting for not full" << endl;
+		cout << "Producer is waiting for not full" << endl;
 		wait(notFull);
 	}
 
@@ -34,7 +34,7 @@ void Buffer::insert(int value)
 
 	if(size == 1)
 	{
-		//cout << "Producer signals that queue is not empty" << endl;
+		cout << "Producer signals that queue is not empty" << endl;
 		signal(notEmpty);
 	}
 
@@ -44,16 +44,16 @@ void Buffer::insert(int value)
 void Buffer::readA()
 {
 	enter();
-	//cout << "A tries to read item... " << endl;	
+	cout << "A tries to read item... " << endl;	
 
 	if(isReadByA)
 	{	
-		//cout << "A waits for notReadByA"  << endl;
+		cout << "A waits for notReadByA"  << endl;
 		wait(notReadByA);
 	}
 	if( isEmpty())
 	{
-		//cout << "A encountered empty queue" << endl;
+		cout << "A encountered empty queue" << endl;
 		wait(notEmpty);
 	}
 
@@ -63,13 +63,13 @@ void Buffer::readA()
 
 	if(notEmpty.getWaitingCount())
 	{
-		//cout << "A signaled notEmpty" << endl;
+		cout << "A signaled notEmpty" << endl;
 		signal(notEmpty);
 	}
 
-	if(!isReadByB)
+	if(read.getWaitingCount())
 	{
-		//cout << "A signaled read" << endl;
+		cout << "A signaled read" << endl;
 		signal(read);
 	}
 
@@ -80,17 +80,17 @@ void Buffer::readA()
 void Buffer::readB()
 {
 	enter();
-	//cout << "B tries to read item... " << endl;	
+	cout << "B tries to read item... " << endl;	
 
 	if(isReadByB)
 	{
-		//cout << "B waits for notReadByB"  << endl;
+		cout << "B waits for notReadByB"  << endl;
 		wait(notReadByB);
 	}
 
 	if( isEmpty())
 	{
-		//cout << "B encountered empty queue" << endl;
+		cout << "B encountered empty queue" << endl;
 		wait(notEmpty);
 	}
 	
@@ -99,13 +99,13 @@ void Buffer::readB()
 
 	if(notEmpty.getWaitingCount())
 	{
-		//cout << "B signaled notEmpty" << endl;
+		cout << "B signaled notEmpty" << endl;
 		signal(notEmpty);
 	}
 
-	if(!isReadByA)
+	if(read.getWaitingCount())
 	{
-		//cout << "B signaled read" << endl;
+		cout << "B signaled read" << endl;
 		signal(read);
 	}
 
@@ -117,23 +117,13 @@ void Buffer::readB()
 void Buffer::consume()
 {
 	enter();
-	//cout << "Consumer tries to take item... " << endl;	
+	cout << "Consumer tries to take item... " << endl;	
 	int result;
 
-	if(isEmpty())
-	{
-		//cout << "Consumer waits for not empty" << endl;
-		wait(notEmpty);
-		if(notEmpty.getWaitingCount())
-		{
-			//cout << "Consumer wakes up readers on notEmpty" <<endl;
-			signal(notEmpty);
-		}
-	}
 
 	if(!(isReadByA || isReadByB))
 	{
-		//cout << "Consumer waits for read" << endl;
+		cout << "Consumer waits for read" << endl;
 		wait(read);
 	}
 
@@ -152,7 +142,7 @@ void Buffer::consume()
 
 	if(size == capacity-1)
 	{
-		//cout << "Consumer signals that queue is not full" << endl;
+		cout << "Consumer signals that queue is not full" << endl;
 		signal(notFull);
 	}
 

@@ -54,7 +54,7 @@ int main()
 
 void randomSleep(int max, int min)
 {
-	//usleep(1000000*min + (gen() % 1000000) * (max - min));
+	usleep(1000000*min + (gen() % 1000000) * (max - min));
 }
 
 void *Producer(void*)
